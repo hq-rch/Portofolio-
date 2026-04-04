@@ -3,8 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wahyu Gustian | Tactical Portfolio v4.1</title>
+    <title>Wahyu Gustian | Mystic & ARGB Portfolio</title>
+    
+    <!-- Config Tailwind dinamis -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        app: 'var(--bg-app)',
+                        card: 'var(--bg-card)',
+                        cardsolid: 'var(--bg-solid)',
+                        primary: 'rgb(var(--c-primary) / <alpha-value>)',
+                        sec: 'rgb(var(--c-sec) / <alpha-value>)',
+                        main: 'var(--t-main)',
+                        mute: 'var(--t-mute)',
+                        dim: 'var(--t-dim)',
+                    },
+                    boxShadow: {
+                        'glow-p': '0 0 20px rgb(var(--c-primary) / 0.4)',
+                        'glow-p-lg': '0 0 40px rgb(var(--c-primary) / 0.6)',
+                        'glow-s': '0 0 20px rgb(var(--c-sec) / 0.4)',
+                        'glow-s-lg': '0 0 40px rgb(var(--c-sec) / 0.6)',
+                    },
+                    dropShadow: {
+                        'glow': '0 0 10px rgb(var(--c-primary) / 0.8)',
+                        'glow-s': '0 0 10px rgb(var(--c-sec) / 0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -13,20 +44,52 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        body { background-color: #0a0a0a; color: #e2e8f0; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #FACC15; border-radius: 10px; }
-        .mix-blend-difference { mix-blend-mode: difference; }
-        #root:empty::before {
-            content: "INITIALIZING COMMAND CENTER...";
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #FACC15; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.5em; animation: pulse 2s infinite;
+        /* CSS VARIABLES: MYSTIC DARK */
+        :root {
+            --bg-app: #070410;
+            --bg-card: rgba(13, 6, 26, 0.6);
+            --bg-solid: #0D061A;
+            --c-primary: 168 85 247; /* #A855F7 */
+            --c-sec: 45 212 191;     /* #2DD4BF */
+            --t-main: #ffffff;
+            --t-mute: #9ca3af;
+            --t-dim: #6b7280;
         }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-        .text-glow { text-shadow: 0 0 20px rgba(250, 204, 21, 0.3); }
-        .vertical-text { writing-mode: vertical-rl; text-orientation: mixed; }
+
+        /* CSS VARIABLES: ARGB LIGHT */
+        .theme-argb {
+            --bg-app: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.7);
+            --bg-solid: #ffffff;
+            --c-primary: 255 0 102;  /* Pink pekat base RGB */
+            --c-sec: 0 204 255;      /* Cyan pekat base RGB */
+            --t-main: #0f172a;
+            --t-mute: #475569;
+            --t-dim: #94a3b8;
+        }
+
+        body { 
+            background-color: var(--bg-app); 
+            color: var(--t-main); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            overflow-x: hidden; 
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-app); }
+        ::-webkit-scrollbar-thumb { background: rgb(var(--c-primary)); border-radius: 10px; }
+        
+        /* Animasi ARGB */
+        .theme-argb .argb-animate {
+            animation: rgbCycle 4s linear infinite;
+        }
+        @keyframes rgbCycle {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -37,7 +100,6 @@
         const motion = window.Motion.motion;
         const AnimatePresence = window.Motion.AnimatePresence;
 
-        // --- BANK KALIMAT TAKTIS ---
         const sentenceBank = {
             LOW: ["Memerlukan pengawasan intensif.", "Kapasitas terbatas pada tugas dasar.", "Rentan dalam situasi tekanan tinggi.", "Perlu bimbingan teknis berkelanjutan."],
             MEDIUM: ["Performa stabil standar lapangan.", "Kepatuhan moderat pada instruksi.", "Potensi pengembangan koordinasi unit.", "Efektif sebagai personel pendukung."],
@@ -45,63 +107,90 @@
             MAX: ["Level performa puncak elit.", "Adaptasi eksekusi jenius taktis.", "Dominasi mutlak aspek strategis.", "Operator level S insting sempurna."]
         };
 
-        // --- Components ---
         const Icon = ({ name, className }) => {
             useEffect(() => { if(window.lucide) window.lucide.createIcons(); }, [name]);
             return <i data-lucide={name} className={className}></i>;
         };
 
-        const GridReveal = ({ onComplete }) => (
-            <div className="fixed inset-0 z-[200] pointer-events-none grid grid-cols-4 md:grid-cols-8 grid-rows-8">
-                {[...Array(64)].map((_, i) => (
-                    <motion.div key={i} initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 0.5, delay: Math.random() * 0.8 }} onAnimationComplete={i === 0 ? onComplete : undefined} className="bg-[#FACC15]/10 border border-[#FACC15]/5" />
-                ))}
+        // --- KOMPONEN ANIMASI LOGO ALA GEMINI ---
+        const AILogo = () => (
+            <div className="relative flex justify-center items-center w-28 h-28 mb-6 argb-animate">
+                {/* Aura Blur Background */}
+                <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0 bg-gradient-to-tr from-primary to-sec rounded-full blur-2xl" />
+                
+                {/* Bintang Utama (Primary) */}
+                <motion.div animate={{ rotate: [0, 180, 360], scale: [1, 1.1, 1] }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} className="absolute w-24 h-24 text-primary drop-shadow-glow">
+                    <svg viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 0 C50 40 60 50 100 50 C60 50 50 60 50 100 C50 60 40 50 0 50 C40 50 50 40 50 0 Z" />
+                    </svg>
+                </motion.div>
+                
+                {/* Bintang Kedua (Secondary) - Rotasi menyilang 45 derajat */}
+                <motion.div animate={{ rotate: [45, -135, -315], scale: [0.7, 0.9, 0.7] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute w-24 h-24 text-sec drop-shadow-glow-s">
+                    <svg viewBox="0 0 100 100" fill="currentColor">
+                        <path d="M50 0 C50 40 60 50 100 50 C60 50 50 60 50 100 C50 60 40 50 0 50 C40 50 50 40 50 0 Z" />
+                    </svg>
+                </motion.div>
+
+                {/* Inti Core (Pulse Putih) */}
+                <motion.div animate={{ scale: [0.8, 1.5, 0.8], opacity: [0.8, 1, 0.8] }} transition={{ duration: 2, repeat: Infinity }} className="absolute w-3 h-3 bg-white rounded-full shadow-[0_0_15px_#fff]" />
             </div>
+        );
+
+        // --- LAYAR LOADING BOOTING ---
+        const BootSequence = ({ onComplete }) => (
+            <motion.div initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 1, delay: 2.5 }} onAnimationComplete={onComplete} className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-app">
+                <AILogo />
+                <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-primary font-mono text-[10px] tracking-[0.5em] mt-4 argb-animate drop-shadow-glow text-center">
+                    AWAKENING<br/>CORE SYSTEM
+                </motion.p>
+                <div className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-8 grid-rows-8 opacity-20">
+                    {[...Array(64)].map((_, i) => (
+                        <motion.div key={i} initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 0.5, delay: Math.random() * 2 }} className="bg-primary/10 border border-primary/5 argb-animate" />
+                    ))}
+                </div>
+            </motion.div>
         );
 
         // --- MAGIC CIRCLE ENGINE ---
         const MagicCircle = ({ type }) => {
-            // Tipe 0: The Chrono Ring (Triple Rotating Rings)
             if (type === 0) return (
-                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-30">
+                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-40 argb-animate">
                     <div className="relative w-[600px] h-[600px] flex items-center justify-center">
-                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border border-dashed border-[#FACC15] rounded-full" />
-                        <motion.div animate={{ rotate: -360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="absolute inset-12 border-2 border-[#FACC15]/40 rounded-full" />
-                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute inset-24 border border-[#FACC15]/60 rounded-full border-t-4 shadow-[0_0_30px_rgba(250,204,21,0.2)]" />
+                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border border-dashed border-primary rounded-full shadow-glow-p" />
+                        <motion.div animate={{ rotate: -360 }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute inset-12 border-2 border-sec/40 rounded-full shadow-glow-s" />
+                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="absolute inset-24 border border-primary/60 rounded-full border-t-4 shadow-glow-p-lg" />
                     </div>
                 </div>
             );
-            // Tipe 1: The Rune Array (Orbiting Squares)
             if (type === 1) return (
-                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-25">
-                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} className="relative w-[550px] h-[550px]">
-                        <div className="absolute inset-0 border border-[#FACC15]/20 rounded-full" />
+                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-40 argb-animate">
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }} className="relative w-[550px] h-[550px]">
+                        <div className="absolute inset-0 border border-primary/30 rounded-full shadow-glow-p" />
                         {[...Array(8)].map((_, i) => (
                             <motion.div key={i} style={{ rotate: `${i * 45}deg` }} className="absolute inset-0 flex justify-center">
-                                <div className="w-4 h-4 bg-[#FACC15] rounded-sm mt-[-8px] shadow-[0_0_15px_#FACC15]" />
+                                <div className="w-3 h-3 bg-sec rounded-full mt-[-6px] shadow-glow-s" />
                             </motion.div>
                         ))}
-                        <div className="absolute inset-16 border border-dashed border-[#FACC15]/30 rounded-full" />
+                        <div className="absolute inset-16 border border-dashed border-primary/40 rounded-full" />
                     </motion.div>
                 </div>
             );
-            // Tipe 2: The HUD Core (Segmented Glow Circle)
             if (type === 2) return (
-                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-40">
+                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-50 argb-animate">
                     <div className="relative w-[500px] h-[500px]">
-                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border-[12px] border-transparent border-t-[#FACC15] border-b-[#FACC15] rounded-full blur-[1px] shadow-[0_0_40px_rgba(250,204,21,0.3)]" />
-                        <motion.div animate={{ rotate: -360 }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} className="absolute inset-6 border border-[#FACC15]/20 rounded-full" />
-                        <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 3, repeat: Infinity }} className="absolute inset-[40%] bg-[#FACC15]/10 rounded-full shadow-[0_0_60px_#FACC15]" />
+                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border-[8px] border-transparent border-t-primary border-b-sec rounded-full blur-[2px] shadow-glow-p-lg" />
+                        <motion.div animate={{ rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute inset-8 border border-primary/40 rounded-full" />
+                        <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-[40%] bg-gradient-to-tr from-primary/30 to-sec/30 rounded-full blur-xl" />
                     </div>
                 </div>
             );
-            // Tipe 3: The Hex-Pulse (Geometric Pulse)
             return (
-                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-20">
+                <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-30 argb-animate">
                     {[...Array(3)].map((_, i) => (
-                        <motion.div key={i} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: [0.5, 1.8], opacity: [0, 1, 0] }} transition={{ duration: 5, repeat: Infinity, delay: i * 1.5, ease: "easeInOut" }} className="absolute w-[600px] h-[600px] border-2 border-[#FACC15] rotate-45" />
+                        <motion.div key={i} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: [0.5, 1.8], opacity: [0, 1, 0] }} transition={{ duration: 6, repeat: Infinity, delay: i * 2, ease: "easeInOut" }} className="absolute w-[600px] h-[600px] border border-primary rotate-45 shadow-glow-p" />
                     ))}
-                    <div className="absolute w-[300px] h-[300px] border border-[#FACC15]/30 rounded-full animate-pulse" />
+                    <div className="absolute w-[300px] h-[300px] border border-sec/40 rounded-full animate-pulse shadow-glow-s" />
                 </div>
             );
         };
@@ -110,28 +199,31 @@
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen flex flex-col items-center justify-center max-w-7xl mx-auto px-8 relative">
                 <MagicCircle type={animType} />
                 
-                {/* Tactical Corner Accents */}
-                <div className="hidden lg:block absolute inset-0 pointer-events-none">
-                    <div className="absolute top-20 left-20 w-32 h-32 border-t-2 border-l-2 border-[#FACC15]/20" />
-                    <div className="absolute top-20 right-20 w-32 h-32 border-t-2 border-r-2 border-[#FACC15]/20" />
-                    <div className="absolute bottom-20 left-20 w-32 h-32 border-b-2 border-l-2 border-[#FACC15]/20" />
-                    <div className="absolute bottom-20 right-20 w-32 h-32 border-b-2 border-r-2 border-[#FACC15]/20" />
+                <div className="hidden lg:block absolute inset-0 pointer-events-none argb-animate">
+                    <div className="absolute top-20 left-20 w-32 h-32 border-t-2 border-l-2 border-primary/30 shadow-glow-p" />
+                    <div className="absolute top-20 right-20 w-32 h-32 border-t-2 border-r-2 border-sec/30 shadow-glow-s" />
+                    <div className="absolute bottom-20 left-20 w-32 h-32 border-b-2 border-l-2 border-sec/30 shadow-glow-s" />
+                    <div className="absolute bottom-20 right-20 w-32 h-32 border-b-2 border-r-2 border-primary/30 shadow-glow-p" />
                 </div>
 
-                <div className="text-center space-y-8 relative z-10">
-                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="flex flex-col items-center gap-4">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-[1px] bg-[#FACC15]/50" />
-                            <p className="text-[12px] font-mono text-[#FACC15] uppercase tracking-[0.8em] font-bold text-glow">Portfolio v3.0</p>
-                            <div className="w-12 h-[1px] bg-[#FACC15]/50" />
+                <div className="text-center space-y-6 relative z-10">
+                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="flex flex-col items-center">
+                        
+                        {/* ANIMASI LOGO ALA GEMINI DISINI */}
+                        <AILogo />
+
+                        <div className="flex items-center gap-4 argb-animate mb-6 mt-[-10px]">
+                            <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-primary" />
+                            <p className="text-[12px] font-mono text-primary uppercase tracking-[0.8em] font-bold drop-shadow-glow">Portfolio v5.0</p>
+                            <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-primary" />
                         </div>
                         
-                        <h2 className="text-7xl md:text-9xl font-black text-white uppercase tracking-tighter leading-none text-glow">
+                        <h2 className="text-7xl md:text-9xl font-black text-main uppercase tracking-tighter leading-none">
                             WAHYU<br />
-                            <span className="text-[#FACC15]">GUSTIAN</span>
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-sec argb-animate drop-shadow-glow">GUSTIAN</span>
                         </h2>
                         
-                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-gray-400 text-[10px] md:text-xs font-mono uppercase tracking-[0.3em] max-w-xl mx-auto mt-6 leading-relaxed">
+                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-mute text-[10px] md:text-xs font-mono uppercase tracking-[0.3em] max-w-xl mx-auto mt-6 leading-relaxed">
                             Adaptasi cepat dengan integritas mutlak, mengotomatisasi keamanan melalui ketangguhan fisik dan mental.
                         </motion.p>
                     </motion.div>
@@ -139,25 +231,18 @@
                     <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.8 }} className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16 max-w-5xl mx-auto">
                         {[
                             { label: 'Field Records', page: 'experience', icon: 'briefcase' },
-                            { label: 'Tactical Tools', page: 'audit', icon: 'clipboard-check' },
+                            { label: 'Aura Scanner', page: 'audit', icon: 'scan-face' },
                             { label: 'Bio & Contact', page: 'profile', icon: 'user' }
                         ].map((item, i) => (
-                            <button 
-                                key={i} 
-                                onClick={() => setPage(item.page)}
-                                className="bg-[#1a1a1a]/40 backdrop-blur-md border border-white/5 p-8 rounded-xl hover:border-[#FACC15] hover:bg-[#FACC15]/5 transition-all group relative overflow-hidden text-left"
-                            >
-                                <div className="flex items-center justify-between mb-6">
-                                    <Icon name={item.icon} className="w-6 h-6 text-[#FACC15] group-hover:scale-110 transition-transform" />
-                                    <div className="w-2 h-2 bg-white/10 rounded-full group-hover:bg-[#FACC15] animate-pulse" />
+                            <button key={i} onClick={() => setPage(item.page)} className="bg-card backdrop-blur-md border border-primary/20 p-8 rounded-xl hover:border-primary/60 transition-all group relative overflow-hidden text-left hover:shadow-glow-p mt-4 sm:mt-0">
+                                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity argb-animate" />
+                                <div className="flex items-center justify-between mb-6 relative z-10 argb-animate">
+                                    <Icon name={item.icon} className="w-6 h-6 text-primary group-hover:text-sec group-hover:scale-110 transition-all" />
+                                    <div className="w-2 h-2 bg-main/20 rounded-full group-hover:bg-sec group-hover:shadow-glow-s animate-pulse" />
                                 </div>
-                                <p className="text-white font-black uppercase tracking-[0.2em] text-sm mb-4 group-hover:text-[#FACC15] transition-colors">{item.label}</p>
-                                <div className="h-[2px] w-full bg-white/5 overflow-hidden">
-                                    <motion.div 
-                                        animate={{ x: ['-100%', '100%'] }} 
-                                        transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }} 
-                                        className="h-full w-1/2 bg-[#FACC15]/40" 
-                                    />
+                                <p className="text-main font-black uppercase tracking-[0.2em] text-sm mb-4 transition-colors relative z-10">{item.label}</p>
+                                <div className="h-[2px] w-full bg-primary/10 overflow-hidden rounded-full relative z-10 argb-animate">
+                                    <motion.div animate={{ x: ['-100%', '100%'] }} transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }} className="h-full w-1/2 bg-gradient-to-r from-transparent via-primary to-transparent" />
                                 </div>
                             </button>
                         ))}
@@ -168,16 +253,16 @@
 
         const ExperiencePage = ({ setPage }) => (
             <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="min-h-screen py-32 max-w-5xl mx-auto px-8 relative">
-                <MagicCircle type={1} /> {/* Rune Array for Experience */}
+                <MagicCircle type={1} />
                 
-                <button onClick={() => setPage('home')} className="fixed top-8 right-8 z-[100] flex items-center gap-2 text-[#FACC15] font-mono text-[10px] uppercase tracking-widest hover:scale-105 transition-all bg-black/50 p-3 rounded-lg border border-[#FACC15]/20 backdrop-blur-md">
-                    <Icon name="arrow-left" className="w-4 h-4" /> Return to Center
+                <button onClick={() => setPage('home')} className="fixed top-4 right-4 sm:top-8 sm:right-8 z-[100] flex items-center gap-2 text-primary font-mono text-[10px] uppercase tracking-widest hover:text-sec transition-colors bg-cardsolid/80 p-3 rounded-lg border border-primary/30 backdrop-blur-md argb-animate">
+                    <Icon name="arrow-left" className="w-4 h-4" /> <span className="hidden sm:inline">Return to Center</span>
                 </button>
                 
-                <div className="relative z-10 space-y-12">
+                <div className="relative z-10 space-y-12 mt-8 sm:mt-0">
                     <div className="flex items-end gap-4">
-                        <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">FIELD<br /><span className="text-[#FACC15]">RECORDS</span></h2>
-                        <div className="h-1 flex-grow bg-gray-800 mb-2" />
+                        <h2 className="text-5xl font-black text-main uppercase tracking-tighter leading-none">FIELD<br /><span className="text-primary argb-animate drop-shadow-glow">RECORDS</span></h2>
+                        <div className="h-1 flex-grow bg-gradient-to-r from-app to-primary/50 mb-2 rounded-r-full argb-animate" />
                     </div>
                     <div className="space-y-12">
                         {[
@@ -186,14 +271,14 @@
                             { title: "Crew Store", company: "Alfamart", year: "2020 — 2021", desc: "Manajemen operasional toko dan kontrol inventori." },
                             { title: "Urban Logistics (Ojol)", company: "Grab Indonesia", year: "2018 — 2023", desc: "Operasi logistik perkotaan (Side Mission)." }
                         ].map((exp, i) => (
-                            <div key={i} className="group relative pl-12 border-l border-gray-800">
-                                <div className="absolute -left-[5px] top-0 w-2 h-2 bg-[#FACC15] rounded-full group-hover:scale-150 transition-transform" />
+                            <div key={i} className="group relative pl-12 border-l border-primary/30 hover:border-primary transition-colors argb-animate">
+                                <div className="absolute -left-[5px] top-0 w-2 h-2 bg-sec rounded-full group-hover:scale-150 group-hover:shadow-glow-s transition-all" />
                                 <div className="space-y-2">
                                     <div className="flex justify-between items-start">
-                                        <div><h3 className="text-2xl font-bold text-white uppercase">{exp.title}</h3><p className="text-[#FACC15] font-mono text-xs uppercase">{exp.company}</p></div>
-                                        <span className="text-[10px] font-mono text-gray-500 uppercase">{exp.year}</span>
+                                        <div><h3 className="text-2xl font-bold text-main uppercase">{exp.title}</h3><p className="text-primary font-mono text-xs uppercase">{exp.company}</p></div>
+                                        <span className="text-[10px] font-mono text-dim uppercase">{exp.year}</span>
                                     </div>
-                                    <p className="text-gray-400 text-sm leading-relaxed max-w-xl italic">"{exp.desc}"</p>
+                                    <p className="text-mute text-sm leading-relaxed max-w-xl italic">"{exp.desc}"</p>
                                 </div>
                             </div>
                         ))}
@@ -204,83 +289,150 @@
 
         const AuditToolPage = ({ setPage }) => {
             const [scanName, setScanName] = useState('');
-            const [isScanning, setIsScanning] = useState(false);
             const [scanResult, setScanResult] = useState(null);
             const [isAnalyzing, setIsAnalyzing] = useState(false);
 
             const handleScan = () => {
-                if (!scanName) return;
-                setIsScanning(true);
-                setTimeout(() => {
-                    const levels = ['LOW', 'MEDIUM', 'HIGH', 'MAX'];
-                    const initialStats = ['Integrity', 'Discipline', 'Strength', 'Speed', 'Consistency', 'Adaptability', 'Teamwork', 'Intelligence', 'Imaginative'].map(label => ({
-                        label, value: levels[Math.floor(Math.random() * 3) + 1]
-                    }));
-                    setScanResult({ name: scanName, stats: initialStats, rank: "A", assessment: "Waiting for tactical analysis..." });
-                    setIsScanning(false);
-                }, 2000);
+                if (!scanName.trim()) return;
+                const initialStats = ['Integrity', 'Discipline', 'Strength', 'Speed', 'Consistency', 'Adaptability', 'Teamwork', 'Intelligence', 'Imaginative'].map(label => ({
+                    label, value: null
+                }));
+                setScanResult({ name: scanName, stats: initialStats, rank: "-", assessment: "Awaiting aura alignment..." });
             };
 
+            const handleKeyDown = (e) => { if(e.key === 'Enter') handleScan(); };
+
             const updateStat = (label, newValue) => {
+                if(!scanResult) return;
                 const newStats = scanResult.stats.map(s => s.label === label ? { ...s, value: newValue } : s);
-                setScanResult({ ...scanResult, stats: newStats });
+                setScanResult({ ...scanResult, stats: newStats, rank: "-", assessment: "Aura shifts detected. Require re-analysis." });
             };
 
             const applyTacticalAnalysis = () => {
+                if(!scanResult) return;
+                const answeredStats = scanResult.stats.filter(s => s.value !== null);
+                if (answeredStats.length === 0) {
+                    setScanResult({ ...scanResult, assessment: "WARNING: No aura nodes configured. Please select levels." });
+                    return;
+                }
+
                 setIsAnalyzing(true);
                 setTimeout(() => {
-                    const shuffled = [...scanResult.stats].sort(() => 0.5 - Math.random());
-                    const selected = shuffled.slice(0, 3);
+                    let score = 0;
+                    answeredStats.forEach(s => {
+                        if(s.value === 'MAX') score += 4;
+                        else if(s.value === 'HIGH') score += 3;
+                        else if(s.value === 'MEDIUM') score += 2;
+                        else if(s.value === 'LOW') score += 1;
+                    });
+                    
+                    const avg = score / answeredStats.length;
+                    let calculatedRank = 'D';
+                    if (avg >= 3.5) calculatedRank = 'S';
+                    else if (avg >= 2.8) calculatedRank = 'A';
+                    else if (avg >= 2.0) calculatedRank = 'B';
+                    else if (avg >= 1.5) calculatedRank = 'C';
+
+                    const shuffled = [...answeredStats].sort(() => 0.5 - Math.random());
+                    const selected = shuffled.slice(0, Math.min(3, answeredStats.length));
                     const sentences = selected.map(s => sentenceBank[s.value][Math.floor(Math.random() * 4)]);
-                    setScanResult({ ...scanResult, assessment: sentences.join(" ") });
+                    
+                    setScanResult({ ...scanResult, rank: calculatedRank, assessment: sentences.join(" ") });
                     setIsAnalyzing(false);
-                }, 1500);
+                }, 600); 
             };
 
             return (
-                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -50 }} className="min-h-screen py-32 max-w-7xl mx-auto px-8 relative">
-                    <MagicCircle type={2} /> {/* HUD Core for Scanner */}
+                <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -50 }} className="min-h-screen py-24 sm:py-32 max-w-7xl mx-auto px-4 sm:px-8 relative">
+                    <MagicCircle type={2} />
                     
-                    <button onClick={() => setPage('home')} className="fixed top-8 right-8 z-[100] flex items-center gap-2 text-[#FACC15] font-mono text-[10px] uppercase tracking-widest hover:scale-105 transition-all bg-black/50 p-3 rounded-lg border border-[#FACC15]/20 backdrop-blur-md">
-                        <Icon name="arrow-left" className="w-4 h-4" /> Return to Center
+                    <button onClick={() => setPage('home')} className="fixed top-4 right-4 sm:top-8 sm:right-8 z-[100] flex items-center gap-2 text-primary font-mono text-[10px] uppercase tracking-widest hover:text-sec transition-colors bg-cardsolid/80 p-3 rounded-lg border border-primary/30 backdrop-blur-md argb-animate">
+                        <Icon name="arrow-left" className="w-4 h-4" /> <span className="hidden sm:inline">Return to Center</span>
                     </button>
                     
-                    <div className="relative z-10 space-y-8">
-                        <h2 className="text-5xl font-black text-white uppercase tracking-tighter">TACTICAL <span className="text-[#FACC15]">SCANNER</span></h2>
-                        <div className="flex gap-4">
-                            <input type="text" placeholder="Operator Name..." className="flex-1 bg-[#1a1a1a]/60 backdrop-blur-md border border-gray-800 p-4 rounded-xl text-white outline-none focus:border-[#FACC15]" value={scanName} onChange={e => setScanName(e.target.value)} />
-                            <button onClick={handleScan} className="bg-[#FACC15] text-black px-8 rounded-xl font-black uppercase tracking-widest">Scan</button>
+                    <div className="relative z-10 space-y-8 mt-8 sm:mt-0">
+                        <h2 className="text-4xl sm:text-5xl font-black text-main uppercase tracking-tighter">AURA <span className="text-primary argb-animate drop-shadow-glow">SCANNER</span></h2>
+                        
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <input 
+                                type="text" 
+                                placeholder="Target Soul Name..." 
+                                className="flex-1 bg-card backdrop-blur-md border border-primary/40 p-4 rounded-xl text-main outline-none focus:border-sec focus:shadow-glow-s transition-all w-full argb-animate" 
+                                value={scanName} 
+                                onChange={e => setScanName(e.target.value)} 
+                                onKeyDown={handleKeyDown}
+                            />
+                            <button onClick={handleScan} className="bg-primary text-white py-4 px-8 rounded-xl font-black uppercase tracking-widest w-full sm:w-auto hover:opacity-80 transition-opacity argb-animate shadow-glow-p">Scan</button>
                         </div>
-                        {isScanning && <div className="py-20 flex flex-col items-center justify-center space-y-4"><motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }} className="w-16 h-16 border-2 border-dashed border-[#FACC15] rounded-full flex items-center justify-center"><Icon name="fingerprint" className="w-8 h-8 text-[#FACC15]" /></motion.div><p className="text-[#FACC15] font-mono text-[10px] uppercase animate-pulse">Analyzing...</p></div>}
-                        {scanResult && !isScanning && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-[#1a1a1a]/60 backdrop-blur-md p-8 rounded-3xl border border-gray-800">
-                                <div className="space-y-6">
-                                    <div className="flex justify-between items-center bg-black/40 p-6 rounded-2xl border border-gray-800 text-glow">
-                                        <div><p className="text-[10px] font-mono text-gray-500 uppercase">Target Identified</p><h3 className="text-3xl font-black text-white uppercase">{scanResult.name}</h3></div>
-                                        <div className="w-16 h-16 border-2 border-[#FACC15] rounded-xl flex items-center justify-center text-3xl font-black text-[#FACC15]">{scanResult.rank}</div>
-                                    </div>
-                                    <div className="space-y-4">
-                                        {scanResult.stats.map((s, i) => (
-                                            <div key={i} className="space-y-2 border-b border-gray-800/50 pb-2">
-                                                <div className="flex justify-between items-center"><span className="text-[8px] font-mono text-gray-500 uppercase">{s.label}</span><span className={`text-[8px] font-mono font-bold ${s.value === 'MAX' ? 'text-cyan-400' : 'text-[#FACC15]'}`}>{s.value}</span></div>
-                                                <div className="flex gap-1">
-                                                    {['LOW', 'MEDIUM', 'HIGH', 'MAX'].map(lvl => (
-                                                        <button key={lvl} onClick={() => updateStat(s.label, lvl)} className={`flex-1 text-[7px] font-mono py-1 rounded border transition-all ${s.value === lvl ? 'bg-[#FACC15] border-[#FACC15] text-black font-bold' : 'bg-transparent border-gray-800 text-gray-600'}`}>{lvl}</button>
-                                                    ))}
-                                                </div>
+
+                        <AnimatePresence>
+                            {scanResult && (
+                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 bg-card backdrop-blur-md p-4 sm:p-8 rounded-3xl border border-primary/30 shadow-xl argb-animate">
+                                    <div className="space-y-6">
+                                        <div className="flex justify-between items-center bg-cardsolid/60 p-4 sm:p-6 rounded-2xl border border-primary/20">
+                                            <div className="overflow-hidden pr-2">
+                                                <p className="text-[10px] font-mono text-sec uppercase drop-shadow-glow-s">Entity Identified</p>
+                                                <h3 className="text-2xl sm:text-3xl font-black text-main uppercase truncate">{scanResult.name}</h3>
                                             </div>
-                                        ))}
+                                            <div className={`w-12 h-12 sm:w-16 sm:h-16 shrink-0 border-2 rounded-xl flex items-center justify-center text-2xl sm:text-3xl font-black transition-all duration-500 ${scanResult.rank === '-' ? 'border-dim text-dim' : 'border-sec text-sec shadow-glow-s'}`}>
+                                                {scanResult.rank}
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="space-y-4">
+                                            {scanResult.stats.map((s, i) => (
+                                                <div key={i} className="space-y-2 border-b border-primary/20 pb-2">
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-[8px] font-mono text-mute uppercase">{s.label}</span>
+                                                        <span className={`text-[8px] font-mono font-bold ${s.value === 'MAX' ? 'text-sec drop-shadow-glow-s' : s.value ? 'text-primary' : 'text-dim'}`}>
+                                                            {s.value || 'UNLINKED'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 sm:gap-2">
+                                                        {['LOW', 'MEDIUM', 'HIGH', 'MAX'].map(lvl => (
+                                                            <button 
+                                                                key={lvl} 
+                                                                onClick={() => updateStat(s.label, lvl)} 
+                                                                className={`w-full text-[7px] font-mono py-1.5 rounded border transition-all ${
+                                                                    s.value === lvl 
+                                                                    ? lvl === 'MAX' 
+                                                                        ? 'bg-sec border-sec text-app font-bold shadow-glow-s' 
+                                                                        : 'bg-primary border-primary text-white font-bold shadow-glow-p' 
+                                                                    : 'bg-transparent border-primary/30 text-mute hover:border-primary/80 hover:text-main'
+                                                                }`}
+                                                            >
+                                                                {lvl}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="space-y-6">
-                                    <div className="aspect-video bg-black/40 rounded-2xl overflow-hidden relative group"><img src={`https://picsum.photos/seed/${scanResult.name}/600/400`} className="w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 transition-all" /></div>
-                                    <div className="p-4 bg-black/60 rounded-xl border border-[#FACC15]/20">
-                                        <div className="flex justify-between items-center mb-2"><h4 className="text-[10px] font-bold text-[#FACC15] uppercase">Tactical Assessment:</h4><button onClick={applyTacticalAnalysis} disabled={isAnalyzing} className="bg-[#FACC15] text-black px-3 py-1 rounded text-[8px] font-black uppercase">{isAnalyzing ? 'Analyzing...' : 'Apply Analysis'}</button></div>
-                                        <p className="text-[11px] text-gray-400 font-mono italic leading-relaxed">"{scanResult.assessment}"</p>
+                                    <div className="space-y-6">
+                                        <div className="aspect-video bg-cardsolid rounded-2xl overflow-hidden relative group border border-primary/20">
+                                            <div className="absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-all z-10 mix-blend-overlay"></div>
+                                            <img src={`https://picsum.photos/seed/${scanResult.name}/600/400`} className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700" />
+                                        </div>
+                                        <div className="p-4 bg-cardsolid/80 rounded-xl border border-primary/40 shadow-inner">
+                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-3">
+                                                <h4 className="text-[10px] font-bold text-sec uppercase drop-shadow-glow-s">Aura Resonance:</h4>
+                                                <button 
+                                                    onClick={applyTacticalAnalysis} 
+                                                    disabled={isAnalyzing} 
+                                                    className={`px-3 py-2 sm:py-1 w-full sm:w-auto rounded text-[8px] font-black uppercase transition-all ${isAnalyzing ? 'bg-cardsolid text-dim border border-dim' : 'bg-gradient-to-r from-primary to-sec text-white shadow-glow-p hover:scale-105'}`}
+                                                >
+                                                    {isAnalyzing ? 'Decoding...' : 'Analyze Aura'}
+                                                </button>
+                                            </div>
+                                            <p className={`text-[11px] font-mono italic leading-relaxed ${scanResult.rank === '-' ? 'text-dim' : 'text-main'}`}>
+                                                "{scanResult.assessment}"
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </motion.div>
             );
@@ -288,25 +440,42 @@
 
         const ProfilePage = ({ setPage }) => (
             <motion.div initial={{ opacity: 0, scale: 1.1 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="min-h-screen py-32 max-w-7xl mx-auto px-8 relative">
-                <MagicCircle type={0} /> {/* Chrono Ring for Profile */}
+                <MagicCircle type={0} />
                 
-                <button onClick={() => setPage('home')} className="fixed top-8 right-8 z-[100] flex items-center gap-2 text-[#FACC15] font-mono text-[10px] uppercase tracking-widest hover:scale-105 transition-all bg-black/50 p-3 rounded-lg border border-[#FACC15]/20 backdrop-blur-md">
-                    <Icon name="arrow-left" className="w-4 h-4" /> Return to Center
+                <button onClick={() => setPage('home')} className="fixed top-4 right-4 sm:top-8 sm:right-8 z-[100] flex items-center gap-2 text-primary font-mono text-[10px] uppercase tracking-widest hover:text-sec transition-colors bg-cardsolid/80 p-3 rounded-lg border border-primary/30 backdrop-blur-md argb-animate">
+                    <Icon name="arrow-left" className="w-4 h-4" /> <span className="hidden sm:inline">Return to Center</span>
                 </button>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10 mt-8 sm:mt-0">
                     <div className="space-y-8">
-                        <h2 className="text-5xl font-black text-white uppercase tracking-tighter text-glow">BIO<span className="text-[#FACC15]">DATA</span></h2>
+                        <h2 className="text-5xl font-black text-main uppercase tracking-tighter">SOUL<span className="text-primary argb-animate drop-shadow-glow">DATA</span></h2>
                         <div className="space-y-4">
-                            <div className="bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/5"><p className="text-[10px] font-mono text-gray-500 uppercase mb-1">Identity</p><h3 className="text-3xl font-bold text-white">Wahyu Gustian</h3><p className="text-gray-400">26 Years / Tegal Alur, Jakarta Barat</p></div>
-                            <div className="bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/5"><p className="text-[10px] font-mono text-gray-500 uppercase mb-1">Philosophy</p><p className="text-gray-400 text-sm italic border-l-2 border-[#FACC15] pl-4">"Adaptasi terhadap teknologi adalah kunci relevansi."</p></div>
+                            <div className="bg-card backdrop-blur-md p-6 rounded-2xl border border-primary/30 shadow-lg argb-animate">
+                                <p className="text-[10px] font-mono text-sec uppercase mb-1 drop-shadow-glow-s">Identity</p>
+                                <h3 className="text-3xl font-bold text-main mb-1">Wahyu Gustian</h3>
+                                <p className="text-mute font-mono text-sm">26 Solar Cycles / Jakarta Barat</p>
+                            </div>
+                            <div className="bg-card backdrop-blur-md p-6 rounded-2xl border border-primary/30 shadow-lg argb-animate">
+                                <p className="text-[10px] font-mono text-sec uppercase mb-1 drop-shadow-glow-s">Philosophy</p>
+                                <p className="text-main text-sm italic border-l-2 border-primary pl-4">"Adaptasi terhadap teknologi adalah kunci relevansi."</p>
+                            </div>
                         </div>
                     </div>
-                    <div className="bg-[#1a1a1a]/60 backdrop-blur-md p-8 rounded-3xl border border-gray-800 space-y-6">
-                        <p className="text-[10px] font-mono text-[#FACC15] uppercase tracking-widest">Contact Channels</p>
+                    <div className="bg-card backdrop-blur-md p-8 rounded-3xl border border-primary/30 space-y-6 shadow-xl argb-animate">
+                        <p className="text-[10px] font-mono text-primary uppercase tracking-widest drop-shadow-glow">Communication Runes</p>
                         <div className="space-y-4">
-                            <a href="tel:083117035721" className="flex items-center gap-4 group"><div className="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center group-hover:text-[#FACC15] transition-all border border-white/5"><Icon name="smartphone" className="w-5 h-5" /></div><div><p className="text-[10px] text-gray-600 uppercase">Phone</p><p className="text-white font-bold">083117035721</p></div></a>
-                            <a href="mailto:wgustian331@gmail.com" className="flex items-center gap-4 group"><div className="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center group-hover:text-[#FACC15] transition-all border border-white/5"><Icon name="mail" className="w-5 h-5" /></div><div><p className="text-[10px] text-gray-600 uppercase">Email</p><p className="text-white font-bold">wgustian331@gmail.com</p></div></a>
+                            <a href="tel:083117035721" className="flex items-center gap-4 group">
+                                <div className="w-12 h-12 rounded-xl bg-cardsolid flex items-center justify-center text-mute group-hover:text-sec group-hover:border-sec transition-all border border-primary/30 shadow-inner">
+                                    <Icon name="smartphone" className="w-5 h-5" />
+                                </div>
+                                <div><p className="text-[10px] text-dim uppercase">Frequency</p><p className="text-main font-bold group-hover:text-sec transition-colors">083117035721</p></div>
+                            </a>
+                            <a href="mailto:wgustian331@gmail.com" className="flex items-center gap-4 group">
+                                <div className="w-12 h-12 rounded-xl bg-cardsolid flex items-center justify-center text-mute group-hover:text-sec group-hover:border-sec transition-all border border-primary/30 shadow-inner">
+                                    <Icon name="mail" className="w-5 h-5" />
+                                </div>
+                                <div><p className="text-[10px] text-dim uppercase">Aether Mail</p><p className="text-main font-bold group-hover:text-sec transition-colors">wgustian331@gmail.com</p></div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -317,15 +486,35 @@
             const [page, setPage] = useState('home');
             const [isBooting, setIsBooting] = useState(true);
             const [homeAnimType, setHomeAnimType] = useState(0);
+            
+            // THEME STATE: 'mystic' or 'argb'
+            const [theme, setTheme] = useState('mystic');
 
             useEffect(() => {
                 setHomeAnimType(Math.floor(Math.random() * 4));
             }, [page]);
 
+            useEffect(() => {
+                document.body.className = theme === 'argb' ? 'theme-argb' : '';
+            }, [theme]);
+
             return (
-                <div className="min-h-screen bg-[#0a0a0a] text-gray-200 selection:bg-[#FACC15] selection:text-black">
-                    <AnimatePresence>{isBooting && <GridReveal onComplete={() => setIsBooting(false)} />}</AnimatePresence>
+                <div className="min-h-screen selection:bg-primary selection:text-white relative">
+                    <AnimatePresence>
+                        {isBooting && <BootSequence onComplete={() => setIsBooting(false)} />}
+                    </AnimatePresence>
                     
+                    {/* TOMBOL SWITCH TEMA */}
+                    {!isBooting && (
+                        <button 
+                            onClick={() => setTheme(t => t === 'mystic' ? 'argb' : 'mystic')}
+                            className="fixed top-4 left-4 z-[100] flex items-center gap-2 text-primary font-mono text-[10px] uppercase tracking-widest hover:text-sec transition-colors bg-cardsolid/80 p-3 rounded-lg border border-primary/30 backdrop-blur-md argb-animate shadow-glow-p"
+                        >
+                            <Icon name={theme === 'mystic' ? 'aperture' : 'moon'} className="w-4 h-4" /> 
+                            <span className="hidden sm:inline">{theme === 'mystic' ? 'ARGB MODE' : 'MYSTIC MODE'}</span>
+                        </button>
+                    )}
+
                     <main>
                         {!isBooting && (
                             <AnimatePresence mode="wait">
@@ -337,8 +526,8 @@
                         )}
                     </main>
                     
-                    <div className="fixed inset-0 pointer-events-none z-[-1] opacity-5">
-                        <div className="absolute inset-0 bg-[linear-gradient(90deg,#FACC15_1px,transparent_1px),linear-gradient(180deg,#FACC15_1px,transparent_1px)] [background-size:80px_80px]"></div>
+                    <div className="fixed inset-0 pointer-events-none z-[-1] opacity-5 mix-blend-overlay argb-animate">
+                        <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--t-main)_1px,transparent_1px),linear-gradient(180deg,var(--t-main)_1px,transparent_1px)] [background-size:80px_80px]"></div>
                     </div>
                 </div>
             );
