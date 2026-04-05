@@ -113,13 +113,6 @@
         const motion = window.Motion.motion;
         const AnimatePresence = window.Motion.AnimatePresence;
 
-        const sentenceBank = {
-            LOW: ["Memerlukan pengawasan intensif.", "Kapasitas terbatas pada tugas dasar.", "Rentan dalam situasi tekanan tinggi.", "Perlu bimbingan teknis berkelanjutan."],
-            MEDIUM: ["Performa stabil standar lapangan.", "Kepatuhan moderat pada instruksi.", "Potensi pengembangan koordinasi unit.", "Efektif sebagai personel pendukung."],
-            HIGH: ["Kapasitas operasional luar biasa.", "Handal dalam keputusan taktis berat.", "Integritas dan loyalitas mutlak.", "Aset elit pemimpin unit mandiri."],
-            MAX: ["Level performa puncak elit.", "Adaptasi eksekusi jenius taktis.", "Dominasi mutlak aspek strategis.", "Operator level S insting sempurna."]
-        };
-
         const Icon = ({ name, className }) => {
             useEffect(() => { if(window.lucide) window.lucide.createIcons(); }, [name]);
             return <i data-lucide={name} className={className}></i>;
@@ -148,7 +141,7 @@
             <motion.div initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ duration: 1, delay: 2.5 }} onAnimationComplete={onComplete} className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-app">
                 <AILogo />
                 <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-primary font-mono text-[10px] tracking-[0.5em] mt-4 argb-animate drop-shadow-glow text-center">
-                    AWAKENING<br/>CORE SYSTEM
+                    SYSTEM INITIALIZATION
                 </motion.p>
                 <div className="absolute inset-0 pointer-events-none grid grid-cols-4 md:grid-cols-8 grid-rows-8 opacity-20">
                     {[...Array(64)].map((_, i) => (
@@ -158,11 +151,11 @@
             </motion.div>
         );
 
-        // --- AI CHATBOT REACT COMPONENT (NORMAL ROLE) ---
+        // --- AI CHATBOT REACT COMPONENT (FORMAL ROLE) ---
         const AIChatbot = () => {
             const [isOpen, setIsOpen] = useState(false);
             const [messages, setMessages] = useState([
-                { sender: 'ai', text: 'Halo! Saya Ode, ai pemandu di web portofolio ini' }
+                { sender: 'ai', text: 'Selamat datang. Saya Ode, AI Asisten di sistem portofolio ini. Silakan sampaikan pertanyaan Anda.' }
             ]);
             const [input, setInput] = useState('');
             const [isTyping, setIsTyping] = useState(false);
@@ -180,37 +173,32 @@
                 setInput('');
                 setIsTyping(true);
 
-                // Ambil 4 riwayat chat biar nyambung
                 const chatHistory = newMessages.slice(-4).map(m => 
-                    `${m.sender === 'ai' ? 'Ode' : 'User'}: ${m.text}`
+                    `${m.sender === 'ai' ? 'Ode' : 'Pengguna'}: ${m.text}`
                 ).join('\n');
 
-                // PETA WEBSITE DITANAM KE OTAK AI
                 const websiteContext = `
-                DATA ISI WEBSITE PORTFOLIO INI:
-                - Pemilik Web: Wahyu Gustian (26 Tahun, Jakarta Barat).
-                - Filosofi Utama: "Adaptasi terhadap teknologi adalah kunci relevansi."
-                - Menu 'Field Records' (Pengalaman):
-                  1. PT Biggy Cemerlang (2025-2026): Helper Mesin Fanuc (Manajemen output mesin injection, packing presisi).
-                  2. PT Kejar (2022-2023): Satpam Pengawalan (Sterilisasi area, kawal teknisi ATM).
-                  3. Alfamart (2020-2021): Crew Store (Operasional & inventori).
-                  4. Grab Indonesia (2018-2023): Urban Logistics / Ojol.
-                - Menu 'candidate/staff Scanner': Ini adalah alat/mini-game interaktif buatan Wahyu untuk mengecek peringkat/rank taktis seseorang berdasarkan kedisiplinan dan integritas.
-                - Menu 'Bio & Contact': Kontak Wahyu ada di Telp/WA (083117035721) dan Email (wgustian331@gmail.com).
-                - Fitur Web: Web ini punya tombol saklar tema "ARGB MODE" (Terang) dan "MYSTIC MODE" (Gelap).
+                INFORMASI SISTEM PORTOFOLIO:
+                - Nama Kandidat: Wahyu Gustian (26 Tahun, Domisili: Jakarta Barat).
+                - Filosofi Profesional: "Adaptasi terhadap teknologi adalah kunci relevansi."
+                - Riwayat Pekerjaan ('Field Records'):
+                  1. PT Biggy Cemerlang (2025-2026): Helper Mesin Fanuc (Mengelola output mesin injection, pengepakan presisi).
+                  2. PT Kejar (2022-2023): Satpam Pengawalan (Sterilisasi area dan pengawalan teknisi ATM).
+                  3. Alfamart (2020-2021): Crew Store (Operasional dan inventarisasi gerai).
+                  4. Grab Indonesia (2018-2023): Logistik Perkotaan (Mitra Pengemudi).
+                - Menu 'Candidate Scanner': Fitur interaktif berbasis AI untuk melakukan simulasi penilaian kompetensi kandidat kerja.
+                - Informasi Kontak ('Bio & Contact'): Telepon/WhatsApp (083117035721), Email (wgustian331@gmail.com).
                 `;
 
-                // ROLE PEMANDU WEB
-                const systemPrompt = `Kamu adalah 'Ode', AI Asisten Pemandu di website portofolio Wahyu Gustian.
-                Tugasmu: Membantu pengunjung (terutama HRD/Perekrut) menjelajahi isi website ini berdasarkan data yang kamu miliki.
+                const systemPrompt = `Anda adalah 'Ode', Asisten Virtual di situs portofolio profesional Wahyu Gustian.
+                Tugas Anda: Membantu pengunjung (terutama Perekrut atau Tim HRD) dalam mendapatkan informasi dari situs ini, serta menjawa pertanyaan user dengan fleksibel.
                 
                 ${websiteContext}
                 
-                INSTRUKSI PENTING: 
-                1. JANGAN pernah mengulang sapaan (seperti "Halo", "Hai"). Langsung jawab pesannya.
-                2. Jika pengunjung bertanya tentang Wahyu atau isi web ini, gunakan data di atas untuk menjawab. 
-                3. Jika pengunjung kebingungan, arahkan mereka untuk mencoba menu 'Field Records' atau bermain di 'Aura Scanner'.
-                4. Jawab dengan ramah, profesional, tapi tetap luwes dan nyambung dengan obrolan sebelumnya.
+                INSTRUKSI WAJIB: 
+                1. Gunakan Bahasa Indonesia yang formal, dan, sopan.
+                2. Jawab dengan ringkas dan terstruktur, serta jawab semua pertanyaan dengan fleksibel 
+                3. Jika pengguna memerlukan informasi lebih spesifik, arahkan mereka ke fitur yang tersedia di situs ini.
                 
                 Riwayat Obrolan:
                 ${chatHistory}
@@ -222,13 +210,13 @@
                     const reply = await res.text();
                     setMessages(prev => [...prev, { sender: 'ai', text: reply }]);
                 } catch(e) {
-                    setMessages(prev => [...prev, { sender: 'ai', text: 'Maaf, jaringan sensor saya sedang terganggu. Coba tanyakan lagi.' }]);
+                    setMessages(prev => [...prev, { sender: 'ai', text: 'Mohon maaf, sistem sedang mengalami gangguan koneksi. Silakan ulangi pertanyaan Anda.' }]);
                 }
                 setIsTyping(false);
             };
 
             const clearChat = () => {
-                setMessages([{ sender: 'ai', text: 'Sesi obrolan sudah direset.' }]);
+                setMessages([{ sender: 'ai', text: 'Sesi obrolan telah direset. Ada hal lain yang ingin Anda tanyakan?' }]);
             };
 
             return (
@@ -378,7 +366,7 @@
                     <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.8 }} className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16 max-w-5xl mx-auto">
                         {[
                             { label: 'Field Records', page: 'experience', icon: 'briefcase' },
-                            { label: 'Candidate/staff Scanner', page: 'audit', icon: 'scan-face' },
+                            { label: 'Candidate Scanner', page: 'audit', icon: 'scan-face' },
                             { label: 'Bio & Contact', page: 'profile', icon: 'user' }
                         ].map((item, i) => (
                             <button key={i} onClick={() => setPage(item.page)} className="bg-card backdrop-blur-md border border-primary/20 p-8 rounded-xl hover:border-primary/60 transition-all group relative overflow-hidden text-left hover:shadow-glow-p mt-4 sm:mt-0">
@@ -389,7 +377,6 @@
                                 </div>
                                 <p className="text-main font-black uppercase tracking-[0.2em] text-sm mb-4 transition-colors relative z-10">{item.label}</p>
                                 
-                                {/* ANIMASI GARIS DIUBAH JADI RINGAN (HOVER EFFECT SAJA) */}
                                 <div className="h-[2px] w-full bg-primary/10 overflow-hidden rounded-full relative z-10">
                                     <div className="h-full w-0 bg-gradient-to-r from-primary to-sec group-hover:w-full transition-all duration-500 ease-out" />
                                 </div>
@@ -415,10 +402,10 @@
                     </div>
                     <div className="space-y-12">
                         {[
-                            { title: "Helper Mesin Fanuc", company: "PT Biggy Cemerlang", year: "2025 — 2026", desc: "Manajemen output produk mesin injection Fanuc. Packing presisi dan kontrol kualitas." },
-                            { title: "Satpam Pengawalan Teknisi ATM", company: "PT Kejar", year: "2022 — 2023", desc: "Pengawalan teknisi ATM trouble dan sterilisasi area operasional." },
-                            { title: "Crew Store", company: "Alfamart", year: "2020 — 2021", desc: "Manajemen operasional toko dan kontrol inventori." },
-                            { title: "Urban Logistics (Ojol)", company: "Grab Indonesia", year: "2018 — 2023", desc: "Operasi logistik perkotaan (Side Mission)." }
+                            { title: "Helper Mesin Fanuc", company: "PT Biggy Cemerlang", year: "2025 — 2026", desc: "Manajemen output produk mesin injection Fanuc. Pengepakan presisi dan kontrol kualitas harian." },
+                            { title: "Satpam Pengawalan", company: "PT Kejar", year: "2022 — 2023", desc: "Pengawalan teknisi perbaikan mesin ATM dan proses sterilisasi area operasional keamanan." },
+                            { title: "Crew Store", company: "Alfamart", year: "2020 — 2021", desc: "Manajemen operasional harian gerai dan pengawasan inventaris barang masuk/keluar." },
+                            { title: "Mitra Pengemudi Ojol", company: "Grab Indonesia", year: "2018 — 2023", desc: "Pelayanan logistik perkotaan dan distribusi secara mandiri." }
                         ].map((exp, i) => (
                             <div key={i} className="group relative pl-12 border-l border-primary/30 hover:border-primary transition-colors argb-animate">
                                 <div className="absolute -left-[5px] top-0 w-2 h-2 bg-sec rounded-full group-hover:scale-150 group-hover:shadow-glow-s transition-all" />
@@ -436,6 +423,7 @@
             </motion.div>
         );
 
+        // --- KOMPONEN TOOL SCANNER TERINTEGRASI AI ---
         const AuditToolPage = ({ setPage }) => {
             const [scanName, setScanName] = useState('');
             const [scanResult, setScanResult] = useState(null);
@@ -443,10 +431,10 @@
 
             const handleScan = () => {
                 if (!scanName.trim()) return;
-                const initialStats = ['Integrity', 'Discipline', 'Strength', 'Speed', 'Consistency', 'Adaptability', 'Teamwork', 'Intelligence', 'Imaginative'].map(label => ({
+                const initialStats = ['Kedisiplinan', 'Integritas', 'Kerjasama Tim', 'Kecerdasan', 'Kecepatan', 'Adaptabilitas', 'Konsistensi', 'Problem Solving'].map(label => ({
                     label, value: null
                 }));
-                setScanResult({ name: scanName, stats: initialStats, rank: "-", assessment: "Awaiting aura alignment..." });
+                setScanResult({ name: scanName, stats: initialStats, rank: "-", assessment: "Menunggu parameter diisi..." });
             };
 
             const handleKeyDown = (e) => { if(e.key === 'Enter') handleScan(); };
@@ -454,41 +442,49 @@
             const updateStat = (label, newValue) => {
                 if(!scanResult) return;
                 const newStats = scanResult.stats.map(s => s.label === label ? { ...s, value: newValue } : s);
-                setScanResult({ ...scanResult, stats: newStats, rank: "-", assessment: "Aura shifts detected. Require re-analysis." });
+                setScanResult({ ...scanResult, stats: newStats, rank: "-", assessment: "Parameter berubah. Membutuhkan analisis ulang." });
             };
 
-            const applyTacticalAnalysis = () => {
+            const applyTacticalAnalysis = async () => {
                 if(!scanResult) return;
                 const answeredStats = scanResult.stats.filter(s => s.value !== null);
                 if (answeredStats.length === 0) {
-                    setScanResult({ ...scanResult, assessment: "WARNING: No aura nodes configured. Please select levels." });
+                    setScanResult({ ...scanResult, assessment: "PERINGATAN: Tidak ada parameter yang dipilih. Silakan isi data." });
                     return;
                 }
 
                 setIsAnalyzing(true);
-                setTimeout(() => {
-                    let score = 0;
-                    answeredStats.forEach(s => {
-                        if(s.value === 'MAX') score += 4;
-                        else if(s.value === 'HIGH') score += 3;
-                        else if(s.value === 'MEDIUM') score += 2;
-                        else if(s.value === 'LOW') score += 1;
-                    });
-                    
-                    const avg = score / answeredStats.length;
-                    let calculatedRank = 'D';
-                    if (avg >= 3.5) calculatedRank = 'S';
-                    else if (avg >= 2.8) calculatedRank = 'A';
-                    else if (avg >= 2.0) calculatedRank = 'B';
-                    else if (avg >= 1.5) calculatedRank = 'C';
+                setScanResult({ ...scanResult, assessment: "Memproses analisis menggunakan sistem AI..." });
 
-                    const shuffled = [...answeredStats].sort(() => 0.5 - Math.random());
-                    const selected = shuffled.slice(0, Math.min(3, answeredStats.length));
-                    const sentences = selected.map(s => sentenceBank[s.value][Math.floor(Math.random() * 4)]);
-                    
-                    setScanResult({ ...scanResult, rank: calculatedRank, assessment: sentences.join(" ") });
+                // Kalkulasi Rank Visual
+                let score = 0;
+                answeredStats.forEach(s => {
+                    if(s.value === 'MAX') score += 4;
+                    else if(s.value === 'HIGH') score += 3;
+                    else if(s.value === 'MEDIUM') score += 2;
+                    else if(s.value === 'LOW') score += 1;
+                });
+                
+                const avg = score / answeredStats.length;
+                let calculatedRank = 'D';
+                if (avg >= 3.5) calculatedRank = 'S';
+                else if (avg >= 2.8) calculatedRank = 'A';
+                else if (avg >= 2.0) calculatedRank = 'B';
+                else if (avg >= 1.5) calculatedRank = 'C';
+
+                // Prompt untuk AI Text Generation (Keluaran Langsung)
+                const statsString = answeredStats.map(s => `${s.label}: ${s.value}`).join(", ");
+                const aiPrompt = `Tindak bertindak sebagai Manajer HRD profesional. Buatlah evaluasi kinerja untuk kandidat bernama "${scanResult.name}" berdasarkan metrik berikut: ${statsString}. Berikan kesimpulan singkat yang sangat formal, menggunakan bahasa Indonesia baku, tidak bertele-tele, maksimal 3 kalimat.`;
+
+                try {
+                    const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`);
+                    const aiAssessment = await res.text();
+                    setScanResult({ ...scanResult, rank: calculatedRank, assessment: aiAssessment });
+                } catch (error) {
+                    setScanResult({ ...scanResult, rank: calculatedRank, assessment: "Sistem AI sedang sibuk. Namun secara kalkulasi sistem dasar, kandidat ini berada di peringkat " + calculatedRank + "." });
+                } finally {
                     setIsAnalyzing(false);
-                }, 600); 
+                }
             };
 
             return (
@@ -500,12 +496,12 @@
                     </button>
                     
                     <div className="relative z-10 space-y-8 mt-8 sm:mt-0">
-                        <h2 className="text-4xl sm:text-5xl font-black text-main uppercase tracking-tighter">AURA <span className="text-primary argb-animate drop-shadow-glow">SCANNER</span></h2>
+                        <h2 className="text-4xl sm:text-5xl font-black text-main uppercase tracking-tighter">CANDIDATE <span className="text-primary argb-animate drop-shadow-glow">SCANNER</span></h2>
                         
                         <div className="flex flex-col sm:flex-row gap-4">
                             <input 
                                 type="text" 
-                                placeholder="Target Soul Name..." 
+                                placeholder="Masukkan Nama Kandidat..." 
                                 className="flex-1 bg-card backdrop-blur-md border border-primary/40 p-4 rounded-xl text-main outline-none focus:border-sec focus:shadow-glow-s transition-all w-full argb-animate" 
                                 value={scanName} 
                                 onChange={e => setScanName(e.target.value)} 
@@ -520,7 +516,7 @@
                                     <div className="space-y-6">
                                         <div className="flex justify-between items-center bg-cardsolid/60 p-4 sm:p-6 rounded-2xl border border-primary/20">
                                             <div className="overflow-hidden pr-2">
-                                                <p className="text-[10px] font-mono text-sec uppercase drop-shadow-glow-s">Entity Identified</p>
+                                                <p className="text-[10px] font-mono text-sec uppercase drop-shadow-glow-s">Kandidat Teridentifikasi</p>
                                                 <h3 className="text-2xl sm:text-3xl font-black text-main uppercase truncate">{scanResult.name}</h3>
                                             </div>
                                             <div className={`w-12 h-12 sm:w-16 sm:h-16 shrink-0 border-2 rounded-xl flex items-center justify-center text-2xl sm:text-3xl font-black transition-all duration-500 ${scanResult.rank === '-' ? 'border-dim text-dim' : 'border-sec text-sec shadow-glow-s'}`}>
@@ -565,13 +561,13 @@
                                         </div>
                                         <div className="p-4 bg-cardsolid/80 rounded-xl border border-primary/40 shadow-inner">
                                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-3">
-                                                <h4 className="text-[10px] font-bold text-sec uppercase drop-shadow-glow-s">Aura Resonance:</h4>
+                                                <h4 className="text-[10px] font-bold text-sec uppercase drop-shadow-glow-s">Hasil Evaluasi AI:</h4>
                                                 <button 
                                                     onClick={applyTacticalAnalysis} 
                                                     disabled={isAnalyzing} 
                                                     className={`px-3 py-2 sm:py-1 w-full sm:w-auto rounded text-[8px] font-black uppercase transition-all ${isAnalyzing ? 'bg-cardsolid text-dim border border-dim' : 'bg-gradient-to-r from-primary to-sec text-white shadow-glow-p hover:scale-105'}`}
                                                 >
-                                                    {isAnalyzing ? 'Decoding...' : 'Analyze Aura'}
+                                                    {isAnalyzing ? 'Sedang Memproses...' : 'Analisis Kandidat'}
                                                 </button>
                                             </div>
                                             <p className={`text-[11px] font-mono italic leading-relaxed ${scanResult.rank === '-' ? 'text-dim' : 'text-main'}`}>
@@ -597,33 +593,33 @@
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10 mt-8 sm:mt-0">
                     <div className="space-y-8">
-                        <h2 className="text-5xl font-black text-main uppercase tracking-tighter">SOUL<span className="text-primary argb-animate drop-shadow-glow">DATA</span></h2>
+                        <h2 className="text-5xl font-black text-main uppercase tracking-tighter">BIO<span className="text-primary argb-animate drop-shadow-glow">DATA</span></h2>
                         <div className="space-y-4">
                             <div className="bg-card backdrop-blur-md p-6 rounded-2xl border border-primary/30 shadow-lg argb-animate">
-                                <p className="text-[10px] font-mono text-sec uppercase mb-1 drop-shadow-glow-s">Identity</p>
+                                <p className="text-[10px] font-mono text-sec uppercase mb-1 drop-shadow-glow-s">Identitas Pribadi</p>
                                 <h3 className="text-3xl font-bold text-main mb-1">Wahyu Gustian</h3>
-                                <p className="text-mute font-mono text-sm">26 Solar Cycles / Jakarta Barat</p>
+                                <p className="text-mute font-mono text-sm">26 Tahun / Domisili Jakarta Barat</p>
                             </div>
                             <div className="bg-card backdrop-blur-md p-6 rounded-2xl border border-primary/30 shadow-lg argb-animate">
-                                <p className="text-[10px] font-mono text-sec uppercase mb-1 drop-shadow-glow-s">Philosophy</p>
+                                <p className="text-[10px] font-mono text-sec uppercase mb-1 drop-shadow-glow-s">Filosofi Kerja</p>
                                 <p className="text-main text-sm italic border-l-2 border-primary pl-4">"Adaptasi terhadap teknologi adalah kunci relevansi."</p>
                             </div>
                         </div>
                     </div>
                     <div className="bg-card backdrop-blur-md p-8 rounded-3xl border border-primary/30 space-y-6 shadow-xl argb-animate">
-                        <p className="text-[10px] font-mono text-primary uppercase tracking-widest drop-shadow-glow">Communication Runes</p>
+                        <p className="text-[10px] font-mono text-primary uppercase tracking-widest drop-shadow-glow">Informasi Kontak</p>
                         <div className="space-y-4">
                             <a href="tel:083117035721" className="flex items-center gap-4 group">
                                 <div className="w-12 h-12 rounded-xl bg-cardsolid flex items-center justify-center text-mute group-hover:text-sec group-hover:border-sec transition-all border border-primary/30 shadow-inner">
                                     <Icon name="smartphone" className="w-5 h-5" />
                                 </div>
-                                <div><p className="text-[10px] text-dim uppercase">Frequency</p><p className="text-main font-bold group-hover:text-sec transition-colors">083117035721</p></div>
+                                <div><p className="text-[10px] text-dim uppercase">WhatsApp / Telepon</p><p className="text-main font-bold group-hover:text-sec transition-colors">083117035721</p></div>
                             </a>
                             <a href="mailto:wgustian331@gmail.com" className="flex items-center gap-4 group">
                                 <div className="w-12 h-12 rounded-xl bg-cardsolid flex items-center justify-center text-mute group-hover:text-sec group-hover:border-sec transition-all border border-primary/30 shadow-inner">
                                     <Icon name="mail" className="w-5 h-5" />
                                 </div>
-                                <div><p className="text-[10px] text-dim uppercase">Aether Mail</p><p className="text-main font-bold group-hover:text-sec transition-colors">wgustian331@gmail.com</p></div>
+                                <div><p className="text-[10px] text-dim uppercase">Email Elektronik</p><p className="text-main font-bold group-hover:text-sec transition-colors">wgustian331@gmail.com</p></div>
                             </a>
                         </div>
                     </div>
