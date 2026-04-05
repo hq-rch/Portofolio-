@@ -83,12 +83,25 @@
         ::-webkit-scrollbar-thumb { background: rgb(var(--c-primary)); border-radius: 10px; }
         
         /* Animasi ARGB */
-        .theme-argb .argb-animate {
-            animation: rgbCycle 4s linear infinite;
-        }
+        .theme-argb .argb-animate { animation: rgbCycle 4s linear infinite; }
         @keyframes rgbCycle {
             0% { filter: hue-rotate(0deg); }
             100% { filter: hue-rotate(360deg); }
+        }
+
+        /* Animasi Bouncing Dots buat loading AI */
+        .typing-indicator {
+            display: flex; align-items: center; gap: 4px; padding: 5px;
+        }
+        .typing-dot {
+            width: 6px; height: 6px; background-color: var(--t-main); border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
@@ -96,7 +109,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+        const { useState, useEffect, useRef } = React;
         const motion = window.Motion.motion;
         const AnimatePresence = window.Motion.AnimatePresence;
 
@@ -112,28 +125,21 @@
             return <i data-lucide={name} className={className}></i>;
         };
 
-        // --- KOMPONEN ANIMASI LOGO ALA GEMINI ---
+        // --- KOMPONEN LOGO CYBER HEXAGON ---
         const AILogo = () => (
             <div className="relative flex justify-center items-center w-28 h-28 mb-6 argb-animate">
-                {/* Aura Blur Background */}
-                <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0 bg-gradient-to-tr from-primary to-sec rounded-full blur-2xl" />
+                <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0 bg-gradient-to-tr from-primary to-sec rounded-full blur-2xl" />
                 
-                {/* Bintang Utama (Primary) */}
-                <motion.div animate={{ rotate: [0, 180, 360], scale: [1, 1.1, 1] }} transition={{ duration: 12, repeat: Infinity, ease: "linear" }} className="absolute w-24 h-24 text-primary drop-shadow-glow">
-                    <svg viewBox="0 0 100 100" fill="currentColor">
-                        <path d="M50 0 C50 40 60 50 100 50 C60 50 50 60 50 100 C50 60 40 50 0 50 C40 50 50 40 50 0 Z" />
+                <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute w-24 h-24 text-primary drop-shadow-glow flex justify-center items-center">
+                    <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polygon points="50,5 89,27 89,72 50,95 11,72 11,27" />
+                        <polygon points="50,15 80,32 80,68 50,85 20,68 20,32" className="text-sec" strokeWidth="1.5" strokeDasharray="4 4" />
                     </svg>
                 </motion.div>
                 
-                {/* Bintang Kedua (Secondary) - Rotasi menyilang 45 derajat */}
-                <motion.div animate={{ rotate: [45, -135, -315], scale: [0.7, 0.9, 0.7] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute w-24 h-24 text-sec drop-shadow-glow-s">
-                    <svg viewBox="0 0 100 100" fill="currentColor">
-                        <path d="M50 0 C50 40 60 50 100 50 C60 50 50 60 50 100 C50 60 40 50 0 50 C40 50 50 40 50 0 Z" />
-                    </svg>
-                </motion.div>
+                <motion.div animate={{ rotate: [360, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "linear" }} className="absolute w-28 h-28 border border-dashed border-sec/40 rounded-full" />
 
-                {/* Inti Core (Pulse Putih) */}
-                <motion.div animate={{ scale: [0.8, 1.5, 0.8], opacity: [0.8, 1, 0.8] }} transition={{ duration: 2, repeat: Infinity }} className="absolute w-3 h-3 bg-white rounded-full shadow-[0_0_15px_#fff]" />
+                <motion.div animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.8, 1, 0.8] }} transition={{ duration: 2, repeat: Infinity }} className="absolute w-5 h-5 bg-gradient-to-tr from-primary to-sec rounded-sm rotate-45 shadow-[0_0_15px_rgb(var(--c-sec))]" />
             </div>
         );
 
@@ -151,6 +157,148 @@
                 </div>
             </motion.div>
         );
+
+        // --- AI CHATBOT REACT COMPONENT (NORMAL ROLE) ---
+        const AIChatbot = () => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [messages, setMessages] = useState([
+                { sender: 'ai', text: 'Halo! Saya Ode, ai pemandu di web portofolio ini' }
+            ]);
+            const [input, setInput] = useState('');
+            const [isTyping, setIsTyping] = useState(false);
+            const chatEndRef = useRef(null);
+
+            const scrollToBottom = () => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); };
+            useEffect(() => { scrollToBottom(); }, [messages, isTyping, isOpen]);
+
+            const handleSend = async () => {
+                if(!input.trim()) return;
+                const userText = input.trim();
+                
+                const newMessages = [...messages, { sender: 'user', text: userText }];
+                setMessages(newMessages);
+                setInput('');
+                setIsTyping(true);
+
+                // Ambil 4 riwayat chat biar nyambung
+                const chatHistory = newMessages.slice(-4).map(m => 
+                    `${m.sender === 'ai' ? 'Ode' : 'User'}: ${m.text}`
+                ).join('\n');
+
+                // PETA WEBSITE DITANAM KE OTAK AI
+                const websiteContext = `
+                DATA ISI WEBSITE PORTFOLIO INI:
+                - Pemilik Web: Wahyu Gustian (26 Tahun, Jakarta Barat).
+                - Filosofi Utama: "Adaptasi terhadap teknologi adalah kunci relevansi."
+                - Menu 'Field Records' (Pengalaman):
+                  1. PT Biggy Cemerlang (2025-2026): Helper Mesin Fanuc (Manajemen output mesin injection, packing presisi).
+                  2. PT Kejar (2022-2023): Satpam Pengawalan (Sterilisasi area, kawal teknisi ATM).
+                  3. Alfamart (2020-2021): Crew Store (Operasional & inventori).
+                  4. Grab Indonesia (2018-2023): Urban Logistics / Ojol.
+                - Menu 'candidate/staff Scanner': Ini adalah alat/mini-game interaktif buatan Wahyu untuk mengecek peringkat/rank taktis seseorang berdasarkan kedisiplinan dan integritas.
+                - Menu 'Bio & Contact': Kontak Wahyu ada di Telp/WA (083117035721) dan Email (wgustian331@gmail.com).
+                - Fitur Web: Web ini punya tombol saklar tema "ARGB MODE" (Terang) dan "MYSTIC MODE" (Gelap).
+                `;
+
+                // ROLE PEMANDU WEB
+                const systemPrompt = `Kamu adalah 'Ode', AI Asisten Pemandu di website portofolio Wahyu Gustian.
+                Tugasmu: Membantu pengunjung (terutama HRD/Perekrut) menjelajahi isi website ini berdasarkan data yang kamu miliki.
+                
+                ${websiteContext}
+                
+                INSTRUKSI PENTING: 
+                1. JANGAN pernah mengulang sapaan (seperti "Halo", "Hai"). Langsung jawab pesannya.
+                2. Jika pengunjung bertanya tentang Wahyu atau isi web ini, gunakan data di atas untuk menjawab. 
+                3. Jika pengunjung kebingungan, arahkan mereka untuk mencoba menu 'Field Records' atau bermain di 'Aura Scanner'.
+                4. Jawab dengan ramah, profesional, tapi tetap luwes dan nyambung dengan obrolan sebelumnya.
+                
+                Riwayat Obrolan:
+                ${chatHistory}
+                
+                Ode:`;
+
+                try {
+                    const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(systemPrompt)}`);
+                    const reply = await res.text();
+                    setMessages(prev => [...prev, { sender: 'ai', text: reply }]);
+                } catch(e) {
+                    setMessages(prev => [...prev, { sender: 'ai', text: 'Maaf, jaringan sensor saya sedang terganggu. Coba tanyakan lagi.' }]);
+                }
+                setIsTyping(false);
+            };
+
+            const clearChat = () => {
+                setMessages([{ sender: 'ai', text: 'Sesi obrolan sudah direset.' }]);
+            };
+
+            return (
+                <div className="fixed z-[150] bottom-4 right-4 sm:bottom-8 sm:right-8 flex flex-col items-end">
+                    
+                    <AnimatePresence>
+                        {isOpen && (
+                            <motion.div initial={{ opacity: 0, y: 20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.9 }} 
+                                className="bg-card backdrop-blur-xl border border-primary/40 w-[90vw] sm:w-[380px] h-[500px] mb-4 rounded-2xl shadow-glow-p overflow-hidden flex flex-col argb-animate">
+                                
+                                {/* Header */}
+                                <div className="bg-cardsolid/80 p-4 border-b border-primary/20 flex justify-between items-center">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 bg-sec rounded-full animate-pulse shadow-glow-s"></div>
+                                        <h3 className="font-mono text-sm font-bold text-main">AI Assistant</h3>
+                                    </div>
+                                    <div className="flex gap-3 text-mute">
+                                        <button onClick={clearChat} className="hover:text-main transition-colors" title="Hapus Obrolan"><Icon name="trash-2" className="w-4 h-4"/></button>
+                                        <button onClick={() => setIsOpen(false)} className="hover:text-sec transition-colors" title="Tutup"><Icon name="x" className="w-4 h-4"/></button>
+                                    </div>
+                                </div>
+
+                                {/* Body */}
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+                                    {messages.map((msg, idx) => (
+                                        <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                            <div className={`max-w-[85%] p-3 text-sm rounded-2xl ${msg.sender === 'user' ? 'bg-gradient-to-r from-primary to-sec text-white rounded-br-none shadow-glow-p' : 'bg-cardsolid border border-primary/20 text-main rounded-bl-none'}`}>
+                                                {msg.text}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {isTyping && (
+                                        <div className="flex justify-start">
+                                            <div className="max-w-[85%] p-4 text-sm rounded-2xl bg-cardsolid border border-primary/20 text-main rounded-bl-none">
+                                                <div className="typing-indicator">
+                                                    <div className="typing-dot"></div>
+                                                    <div className="typing-dot"></div>
+                                                    <div className="typing-dot"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div ref={chatEndRef} />
+                                </div>
+
+                                {/* Input */}
+                                <div className="p-3 bg-cardsolid/80 border-t border-primary/20 flex gap-2">
+                                    <input 
+                                        type="text" 
+                                        value={input}
+                                        onChange={e => setInput(e.target.value)}
+                                        onKeyPress={e => e.key === 'Enter' && handleSend()}
+                                        placeholder="Ketik pertanyaan di sini..." 
+                                        className="flex-1 bg-card border border-primary/30 rounded-xl px-4 py-2 text-sm text-main outline-none focus:border-sec transition-colors"
+                                    />
+                                    <button onClick={handleSend} className="bg-primary/20 hover:bg-primary/50 text-primary hover:text-white border border-primary/50 rounded-xl px-3 transition-all flex items-center justify-center">
+                                        <Icon name="send" className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* FLOATING BUTTON */}
+                    <button onClick={() => setIsOpen(!isOpen)} className="w-14 h-14 bg-cardsolid border-2 border-primary rounded-full flex items-center justify-center text-primary hover:text-sec hover:border-sec hover:scale-110 transition-all shadow-glow-p argb-animate">
+                        {isOpen ? <Icon name="x" className="w-6 h-6" /> : <Icon name="bot" className="w-6 h-6" />}
+                    </button>
+                </div>
+            );
+        };
 
         // --- MAGIC CIRCLE ENGINE ---
         const MagicCircle = ({ type }) => {
@@ -209,7 +357,6 @@
                 <div className="text-center space-y-6 relative z-10">
                     <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="flex flex-col items-center">
                         
-                        {/* ANIMASI LOGO ALA GEMINI DISINI */}
                         <AILogo />
 
                         <div className="flex items-center gap-4 argb-animate mb-6 mt-[-10px]">
@@ -231,7 +378,7 @@
                     <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.8 }} className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16 max-w-5xl mx-auto">
                         {[
                             { label: 'Field Records', page: 'experience', icon: 'briefcase' },
-                            { label: 'Aura Scanner', page: 'audit', icon: 'scan-face' },
+                            { label: 'Candidate/staff Scanner', page: 'audit', icon: 'scan-face' },
                             { label: 'Bio & Contact', page: 'profile', icon: 'user' }
                         ].map((item, i) => (
                             <button key={i} onClick={() => setPage(item.page)} className="bg-card backdrop-blur-md border border-primary/20 p-8 rounded-xl hover:border-primary/60 transition-all group relative overflow-hidden text-left hover:shadow-glow-p mt-4 sm:mt-0">
@@ -241,8 +388,10 @@
                                     <div className="w-2 h-2 bg-main/20 rounded-full group-hover:bg-sec group-hover:shadow-glow-s animate-pulse" />
                                 </div>
                                 <p className="text-main font-black uppercase tracking-[0.2em] text-sm mb-4 transition-colors relative z-10">{item.label}</p>
-                                <div className="h-[2px] w-full bg-primary/10 overflow-hidden rounded-full relative z-10 argb-animate">
-                                    <motion.div animate={{ x: ['-100%', '100%'] }} transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }} className="h-full w-1/2 bg-gradient-to-r from-transparent via-primary to-transparent" />
+                                
+                                {/* ANIMASI GARIS DIUBAH JADI RINGAN (HOVER EFFECT SAJA) */}
+                                <div className="h-[2px] w-full bg-primary/10 overflow-hidden rounded-full relative z-10">
+                                    <div className="h-full w-0 bg-gradient-to-r from-primary to-sec group-hover:w-full transition-all duration-500 ease-out" />
                                 </div>
                             </button>
                         ))}
@@ -486,25 +635,17 @@
             const [page, setPage] = useState('home');
             const [isBooting, setIsBooting] = useState(true);
             const [homeAnimType, setHomeAnimType] = useState(0);
-            
-            // THEME STATE: 'mystic' or 'argb'
             const [theme, setTheme] = useState('mystic');
 
-            useEffect(() => {
-                setHomeAnimType(Math.floor(Math.random() * 4));
-            }, [page]);
-
-            useEffect(() => {
-                document.body.className = theme === 'argb' ? 'theme-argb' : '';
-            }, [theme]);
+            useEffect(() => { setHomeAnimType(Math.floor(Math.random() * 4)); }, [page]);
+            useEffect(() => { document.body.className = theme === 'argb' ? 'theme-argb' : ''; }, [theme]);
 
             return (
-                <div className="min-h-screen selection:bg-primary selection:text-white relative">
+                <div className="min-h-screen selection:bg-primary selection:text-white relative overflow-hidden">
                     <AnimatePresence>
                         {isBooting && <BootSequence onComplete={() => setIsBooting(false)} />}
                     </AnimatePresence>
                     
-                    {/* TOMBOL SWITCH TEMA */}
                     {!isBooting && (
                         <button 
                             onClick={() => setTheme(t => t === 'mystic' ? 'argb' : 'mystic')}
@@ -525,6 +666,9 @@
                             </AnimatePresence>
                         )}
                     </main>
+
+                    {/* RENDER CHATBOT SETELAH LOADING SELESAI */}
+                    {!isBooting && <AIChatbot />}
                     
                     <div className="fixed inset-0 pointer-events-none z-[-1] opacity-5 mix-blend-overlay argb-animate">
                         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--t-main)_1px,transparent_1px),linear-gradient(180deg,var(--t-main)_1px,transparent_1px)] [background-size:80px_80px]"></div>
