@@ -474,7 +474,7 @@
 
                 // Prompt untuk AI Text Generation (Keluaran Langsung)
                 const statsString = answeredStats.map(s => `${s.label}: ${s.value}`).join(", ");
-                const aiPrompt = `Tindak bertindak sebagai Manajer HRD profesional. Buatlah evaluasi kinerja untuk kandidat bernama "${scanResult.name}" berdasarkan metrik berikut: ${statsString}. Berikan kesimpulan singkat yang sangat formal, menggunakan bahasa Indonesia baku, tidak bertele-tele, maksimal 3 kalimat.`;
+                const aiPrompt = `Tindak bertindak sebagai Manajer HRD profesional. Buatlah evaluasi kinerja untuk kandidat bernama "${scanResult.name}" berdasarkan metrik berikut: ${statsString}. Berikan kesimpulan singkat yang sangat formal, menggunakan bahasa Indonesia baku, tidak bertele-tele, maksimal 3 kalimat dan JANGAN mengulangi memyebutkan nilai metrik (seperti "MAX", "HIGHT", DLL, atau daftar kategori di dalam jawaban. `;
 
                 try {
                     const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(aiPrompt)}`);
